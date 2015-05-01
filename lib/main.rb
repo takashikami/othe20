@@ -21,6 +21,7 @@ nxs[4].flatten.each do |nx|
 end
 ban.print
 puts
-
+ban.turn = Ban::SIRO
+ban.wait = Ban::KURO
 ban.taketurn.first.flatten.each(&:reversi)
 ban.print

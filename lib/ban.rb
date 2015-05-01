@@ -37,15 +37,16 @@ class Ban
         rev = [nxa]
         (2..8).each do |i|
           reva = mget(nx.x+dx*i,nx.y+dy*i)
+          if reva.nil?
+            rev = []
+            break
+          end
           case reva.c
             when @wait
               rev << reva
             when @turn
               break
             when NONE
-              rev = []
-              break
-            when nil
               rev = []
               break
           end
