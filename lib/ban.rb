@@ -2,29 +2,38 @@ SIRO=2
 KURO=3
 
 class Mas
-  @x = 0
-  @y = 0
+  attr_reader :x,:y,:c
+  def inspect
+    [@x,@y]
+  end
   def initialize(x,y)
     @x = x
     @y = y
+    @c = 0
+    if x<0 || y<0
+      self
+    else
+      nil
+    end
   end
   def adr
     @y*8+@x
   end
-  def adr=(a)
-    @x=a%8
-    @y=a/8
+  def self.adr(a)
+    x=a%8
+    y=a/8
+    Mas.new(x,y)
   end
   def around
     [
-        Mas.new(*[@x+1,@y+1]),
-        Mas.new(*[@x+1,@y]),
-        Mas.new(*[@x+1,@y-1]),
-        Mas.new(*[@x,  @y+1]),
-        Mas.new(*[@x,  @y-1]),
-        Mas.new(*[@x-1,@y+1]),
-        Mas.new(*[@x-1,@y]),
-        Mas.new(*[@x-1,@y-1]),
+        Mas.new(@x+1,@y+1),
+        Mas.new(@x+1,@y),
+        Mas.new(@x+1,@y-1),
+        Mas.new(@x,  @y+1),
+        Mas.new(@x,  @y-1),
+        Mas.new(@x-1,@y+1),
+        Mas.new(@x-1,@y),
+        Mas.new(@x-1,@y-1),
     ]
   end
 end
@@ -46,11 +55,20 @@ class Ban
     @b[x][y]=c
   end
 
-  def search(c)
+  def searchxxx(c)
     ps = []
     8.times do |x|
       8.times do |y|
         ps << [x,y] if @b[x][y] == c
+      end
+    end
+    ps
+  end
+  def search(c)
+    ps = []
+    8.times do |x|
+      8.times do |y|
+        ps << Mas.new(x,y) if @b[x][y] == c
       end
     end
     ps
@@ -70,9 +88,7 @@ class Ban
   end
 
   def taketurn(ps)
-    ps.map do |x,y|
-      around(x,y).map{|x,y|x+8*y}
-    end.flatten.uniq
+    ps.map(&:around).flatten.map(&:adr).uniq.map{|a|Mas.adr(a)}
   end
 
 end
@@ -91,4 +107,4 @@ nx = ban.search(SIRO)
 p nx
 p ban.taketurn(nx)
 
-p [Mas.new(1,1),Mas.new(2,3)].map{|x|x.adr}
+
