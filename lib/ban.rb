@@ -80,6 +80,9 @@ ban.pset(3,3,KURO)
 ban.pset(4,4,KURO)
 ban.pset(4,3,SIRO)
 ban.pset(3,4,SIRO)
+ban.pset(3,5,SIRO)
+ban.pset(3,6,SIRO)
+ban.pset(4,6,KURO)
 ban.print
 puts
 
@@ -88,31 +91,33 @@ nx = ban.search(SIRO).map(&:around).flatten.uniq.select{|m|m.c==0}
 nx.map do |nxx|
   nn = nxx.around.select{|mx|mx.c==SIRO}
   nn.each do |nnn|
-    dx,dy = nnn.vector(nxx)
+    #p ["========#{nnn}"]
+    dx,dy = nxx.vector(nnn)
+    #p ["vector",nnn,nxx,dx,dy]
     rev = [nnn]
     (2..8).each do |i|
-      reva = ban.mget(nxx.x+dx,nxx.y+dy)
-      p ["reva",reva,reva.c]
+      reva = ban.mget(nxx.x+dx*i,nxx.y+dy*i)
+      #p ["reva",reva,reva.c]
       case reva.c
         when SIRO
+          #p "#{i} SIRO"
           rev << reva
-          p "#{i} SIRO"
         when KURO
-          p "#{i} GET"
+          p "#{i} GET #{nxx.inspect} #{rev.map(&:inspect)} #{reva.inspect}"
           break
         when 0
-          p "#{i} SUKA"
+          #p "#{i} SUKA"
           rev = []
           break
         when nil
-          p "#{i} KABE"
+          #p "#{i} KABE"
           rev = []
           break
       end
     end
-    p ["rev",rev]
+    #p ["rev",rev]
   end
-  p [nxx,nn]
+  #p [nxx,nn]
 end
 #ban.taketurn(nx)
 #p ban.mget(0,0).around
