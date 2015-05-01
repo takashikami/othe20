@@ -36,4 +36,8 @@ class Mas
         @b.mget(@x-1,@y-1),
     ].compact
   end
+
+  def reversi
+    @c = @b.turn
+  end
 end

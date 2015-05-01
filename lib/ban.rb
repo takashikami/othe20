@@ -1,8 +1,14 @@
 class Ban
-  attr_accessor :m
+  SIRO=2
+  KURO=3
+  NONE=0
+
+  attr_accessor :m, :turn, :wait
 
   def initialize
     @m = (0..63).to_a.map{|a|Mas.adr(a,self)}
+    @turn = KURO
+    @wait = SIRO
   end
 
   def print
@@ -21,7 +27,42 @@ class Ban
     @m.select{|m|m.c == c}
   end
 
-  def taketurn(ps)
-    around = ps.map(&:around).flatten.uniq
+  def taketurn
+    @m.select{|m|m.c == @wait}.map(&:around)
+        .flatten.uniq.select{|m|m.c==NONE}.map do |nx|
+      nxarounds = nx.around.select{|mx|mx.c==@wait}
+      revs = []
+      nxarounds.each do |nxa|
+        dx,dy = [nxa.x-nx.x, nxa.y-nx.y]
+        rev = [nxa]
+        (2..8).each do |i|
+          reva = mget(nx.x+dx*i,nx.y+dy*i)
+          case reva.c
+            when @wait
+              rev << reva
+            when @turn
+              break
+            when NONE
+              rev = []
+              break
+            when nil
+              rev = []
+              break
+          end
+        end
+        revs.concat(rev)
+      end
+      [nx, revs.flatten] unless revs.flatten.empty?
+    end.compact
+=begin
+        .map do |nx|
+      p nx
+      nxb = Ban.new
+      nxb.m=@m.clone
+      nxb.print
+      puts
+      nx.flatten.each{|m|nxb.pset(m.x,m.y,@turn)}
+      nxb
+=end
   end
 end
