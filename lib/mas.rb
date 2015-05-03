@@ -1,27 +1,25 @@
 class Mas
-  attr_accessor :x,:y,:c
+  attr_accessor :x,:y,:b,:c
 
   def inspect
     [@x,@y]
   end
 
-  def initialize(x,y,b)
+  def initialize(x,y,b,c=0)
     @b = b
     @x = x
     @y = y
-    @c = 0
+    @c = c
   end
 
-  def self.pos(x,y,b)
-    return if x<0 || y<0
-    Mas.new(x,y,b)
+  def self.pos(x,y,b,c=0)
+    Mas.new(x,y,b,c) unless x<0 || y<0
   end
 
-  def self.adr(a,b)
+  def self.adr(a,b,c=0)
     x=a%8
     y=a/8
-    return if x<0 || y<0
-    Mas.new(x,y,b)
+    Mas.new(x,y,b,c) unless x<0 || y<0
   end
 
   def around

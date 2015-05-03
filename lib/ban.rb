@@ -11,6 +11,10 @@ class Ban
     @wait = SIRO
   end
 
+  def initialize_copy(obj)
+    @m = obj.m.map{|a|Mas.pos(a.x,a.y,self,a.c)}
+  end
+
   def print
     @m.map(&:c).map(&:to_s).join.unpack('a8'*8).each{|r|p r}
     nil
@@ -55,15 +59,5 @@ class Ban
       end
       [nx, revs.flatten] unless revs.flatten.empty?
     end.compact
-=begin
-        .map do |nx|
-      p nx
-      nxb = Ban.new
-      nxb.m=@m.clone
-      nxb.print
-      puts
-      nx.flatten.each{|m|nxb.pset(m.x,m.y,@turn)}
-      nxb
-=end
   end
 end
