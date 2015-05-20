@@ -23,9 +23,8 @@ p [ban.turn, nx.first, ban.dump]
 puts
 
 p ban.taketurn
-nxs = ban.placeables
-nxs.each{|nx|p nx}
+nx = ban.placeables.first
 
-ban.reversi(nxs[1])
+ban.reversi(nx)
 ban.printban
-p [ban.turn, nxs[1].first, ban.dump]
+p [ban.turn, nx.first, ban.dump]

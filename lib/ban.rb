@@ -41,7 +41,7 @@ class Ban
   end
 
   def placeables
-    calc_placeables unless defined? @placeables
+    calc_placeables # unless defined? @placeables
     @placeables
   end
   def check(x,y)
