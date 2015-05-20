@@ -1,27 +1,27 @@
 #
 require '../lib/ban'
 require '../lib/mas'
+include Col
 
 ban = Ban.new
-ban.pset(3,3,Ban::KURO)
-ban.pset(4,4,Ban::KURO)
-ban.pset(4,3,Ban::SIRO)
-ban.pset(3,4,Ban::SIRO)
-ban.pset(3,5,Ban::SIRO)
-ban.pset(3,6,Ban::SIRO)
-ban.pset(4,6,Ban::KURO)
-ban.print
+ban[3,3]=KURO
+ban[4,4]=KURO
+ban[4,3]=SIRO
+ban[3,4]=SIRO
+ban[3,5]=SIRO
+ban[3,6]=SIRO
+ban[4,6]=KURO
+ban.printban
 puts
 
-nxs = ban.taketurn
-nxs.each{|nx|p nx}
+nxs = ban.placeables
+nx = nxs.select{|canx|[canx.first.x,canx.first.y]==[3,7]}
+nx = ban.check(3,7)
+p nx
 
-nxs[4].flatten.each do |nx|
-  nx.reversi
-end
-ban.print
+nx.each(&:reversi)
+ban.printban
 puts
-ban.turn = Ban::SIRO
-ban.wait = Ban::KURO
-ban.taketurn.first.flatten.each(&:reversi)
-ban.print
+p ban.taketurn
+ban.placeables.first.each(&:reversi)
+ban.printban

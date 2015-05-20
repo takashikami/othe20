@@ -1,8 +1,10 @@
-class Ban
+module Col
+  NONE=0
   SIRO=2
   KURO=3
-  NONE=0
-
+end
+class Ban
+  include Col
   attr_accessor :m, :turn, :wait
 
   def initialize
@@ -15,15 +17,22 @@ class Ban
     @m = obj.m.map{|a|Mas.pos(a.x,a.y,self,a.c)}
   end
 
-  def print
-    @m.map(&:c).map(&:to_s).join.unpack('a8'*8).each{|r|p r}
+  def printban
+    @m.map(&:c).map(&:to_s).join(' ').unpack('a16'*8).each{|r|p r.strip}
     nil
   end
 
-  def mget(x,y)
+  def taketurn
+    last = @wait
+    @wait = @turn
+    @turn = last
+  end
+
+  def [](x,y)
     @m[x+8*y] unless x<0 || y<0
   end
-  def pset(x,y,c)
+
+  def []=(x,y,c)
     @m[x+8*y].c=c
   end
 
@@ -31,7 +40,11 @@ class Ban
     @m.select{|m|m.c == c}
   end
 
-  def taketurn
+  def check(x,y)
+    placeables.select{|canx|canx.first.inspect==[x,y]}.first
+  end
+
+  def placeables
     @m.select{|m|m.c == @wait}.map(&:around)
         .flatten.uniq.select{|m|m.c==NONE}.map do |nx|
       nxarounds = nx.around.select{|mx|mx.c==@wait}
@@ -40,7 +53,7 @@ class Ban
         dx,dy = [nxa.x-nx.x, nxa.y-nx.y]
         rev = [nxa]
         (2..8).each do |i|
-          reva = mget(nx.x+dx*i,nx.y+dy*i)
+          reva = self[nx.x+dx*i,nx.y+dy*i]
           if reva.nil?
             rev = []
             break
@@ -57,7 +70,7 @@ class Ban
         end
         revs.concat(rev)
       end
-      [nx, revs.flatten] unless revs.flatten.empty?
+      [nx, revs].flatten unless revs.flatten.empty?
     end.compact
   end
 end

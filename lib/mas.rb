@@ -24,14 +24,14 @@ class Mas
 
   def around
     [
-        @b.mget(@x+1,@y+1),
-        @b.mget(@x+1,@y),
-        @b.mget(@x+1,@y-1),
-        @b.mget(@x,  @y+1),
-        @b.mget(@x,  @y-1),
-        @b.mget(@x-1,@y+1),
-        @b.mget(@x-1,@y),
-        @b.mget(@x-1,@y-1),
+        @b[@x+1,@y+1],
+        @b[@x+1,@y  ],
+        @b[@x+1,@y-1],
+        @b[@x,  @y+1],
+        @b[@x,  @y-1],
+        @b[@x-1,@y+1],
+        @b[@x-1,@y  ],
+        @b[@x-1,@y-1],
     ].compact
   end
 
