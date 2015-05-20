@@ -14,14 +14,16 @@ ban[4,6]=KURO
 ban.printban
 puts
 
-nxs = ban.placeables
-nx = nxs.select{|canx|[canx.first.x,canx.first.y]==[3,7]}
+ban.calc_placeables
 nx = ban.check(3,7)
 p nx
 
 nx.each(&:reversi)
 ban.printban
+p [ban.turn, nx.first, ban.dump]
 puts
 p ban.taketurn
-ban.placeables.first.each(&:reversi)
+nx = ban.calc_placeables.first
+nx.each(&:reversi)
 ban.printban
+p [ban.turn, nx.first, ban.dump]
