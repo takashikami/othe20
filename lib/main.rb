@@ -14,16 +14,18 @@ ban[4,6]=KURO
 ban.printban
 puts
 
-ban.calc_placeables
 nx = ban.check(3,7)
-p nx
+p ["="*10,nx]
 
-nx.each(&:reversi)
+ban.reversi(nx)
 ban.printban
 p [ban.turn, nx.first, ban.dump]
 puts
+
 p ban.taketurn
-nx = ban.calc_placeables.first
-nx.each(&:reversi)
+nxs = ban.placeables
+nxs.each{|nx|p nx}
+
+ban.reversi(nxs[1])
 ban.printban
-p [ban.turn, nx.first, ban.dump]
+p [ban.turn, nxs[1].first, ban.dump]

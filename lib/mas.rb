@@ -1,7 +1,7 @@
 class Mas
   attr_accessor :x,:y,:b,:c
 
-  def inspect
+  def xy
     [@x,@y]
   end
 
@@ -33,9 +33,5 @@ class Mas
         @b[@x-1,@y  ],
         @b[@x-1,@y-1],
     ].compact
-  end
-
-  def reversi
-    @c = @b.turn
   end
 end

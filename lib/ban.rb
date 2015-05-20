@@ -6,7 +6,6 @@ end
 class Ban
   include Col
   attr_accessor :m, :turn, :wait
-  attr_reader :placeables
 
   def initialize
     @m = (0..63).to_a.map{|a|Mas.adr(a,self)}
@@ -41,9 +40,23 @@ class Ban
     @m[x+8*y].c=c
   end
 
-  def check(x,y)
-    @placeables.select{|canx|canx.first.inspect==[x,y]}.first
+  def placeables
+    calc_placeables unless defined? @placeables
+    @placeables
   end
+  def check(x,y)
+    calc_placeables unless defined? @placeables
+    @placeables.select{|canx|
+      canx.first==[x,y]}.first
+  end
+
+  def reversi(nx)
+    nx.each do |m|
+      self[*m]=@turn
+    end
+  end
+
+  private
 
   def calc_placeables
     @placeables = @m.select{|m|m.c == @wait}.map(&:around)
@@ -71,7 +84,7 @@ class Ban
         end
         revs.concat(rev)
       end
-      [nx, revs].flatten unless revs.flatten.empty?
+      [nx, revs].flatten.map(&:xy) unless revs.flatten.empty?
     end.compact
   end
 end
