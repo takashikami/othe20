@@ -42,7 +42,9 @@ oldban = ban
 ban = oldban.reversi(nx)
 ban.taketurn
 p [oldban.dump, ban.wait, nx.first, ban.dump]
+p '='*15
 Ban.load(ban.dump).printban
+p '='*15
 puts
 
 ban = Ban.new
@@ -64,7 +66,7 @@ loop do
   oldban = ban
   ban = ban.reversi(nx)
   ban.taketurn
-  p [oldban.dump, ban.wait, nx.first, ban.dump]
+  p [oldban.dump, ban.wait, nx.first, ban.dump, ban.counts]
   #ban.printban
   #puts
 end
