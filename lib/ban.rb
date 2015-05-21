@@ -20,7 +20,15 @@ class Ban
   end
 
   def dump
-    [@m.map{|m|'%02b'%m.c}.join].pack('B*')
+    [@m.map{|m|'%02b'%m.c}.join].pack('B*')+[@turn].pack('C')
+  end
+
+  def self.load(data)
+    ban = Ban.new
+    dump, turn = data.unpack('B128'+'C')
+    ban.m = [(0..63).to_a,dump.unpack('a2'*64).map{|a|a.to_i(2)}].transpose.map{|a|Mas.adr(a[0],ban,a[1])}
+    ban.turn = turn
+    ban
   end
 
   def printban

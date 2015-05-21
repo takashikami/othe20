@@ -16,12 +16,12 @@ puts
 
 nx = ban.check(3,7)
 ban = ban.reversi(nx)
-ban.printban
 p [ban.turn, nx.first, ban.dump]
+Ban.load(ban.dump).printban
 puts
 
 p ban.taketurn
 nx = ban.placeables.first
 ban = ban.reversi(nx)
-ban.printban
 p [ban.turn, nx.first, ban.dump]
+ban.printban
