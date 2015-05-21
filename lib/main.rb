@@ -23,7 +23,7 @@ else
   ban.reversi(nxs.first).printban
 end
 
-exit
+#exit
 
 
 ban = Ban.new
@@ -38,18 +38,34 @@ ban.printban
 puts
 
 nx = ban.check(3,7)
-ban = ban.reversi(nx)
-p [ban.turn, nx.first, ban.dump]
+oldban = ban
+ban = oldban.reversi(nx)
+ban.taketurn
+p [oldban.dump, ban.wait, nx.first, ban.dump]
 Ban.load(ban.dump).printban
 puts
 
+ban = Ban.new
+ban[3,3]=KURO
+ban[4,4]=KURO
+ban[4,3]=SIRO
+ban[3,4]=SIRO
 loop do
   break unless ban.counts[0] > 0
-  ban.taketurn
-  nx = ban.placeables.first
+  nxs = if ban.calc_placeables.empty?
+    ban.taketurn
+    ban.calc_placeables
+  else
+    ban.placeables
+  end
+  break if nxs.empty?
+
+  nx = nxs.sample
+  oldban = ban
   ban = ban.reversi(nx)
-  p [ban.turn, nx.first, ban.dump]
-  ban.printban
-  p ban.counts
-  puts
+  ban.taketurn
+  p [oldban.dump, ban.wait, nx.first, ban.dump]
+  #ban.printban
+  #puts
 end
+p ban.counts
