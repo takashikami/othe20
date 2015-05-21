@@ -62,12 +62,9 @@ loop do
   end
   break if nxs.empty?
 
-  nx = nxs.sample
-  oldban = ban
-  ban = ban.reversi(nx)
-  ban.taketurn
-  p [oldban.dump, ban.wait, nx.first, ban.dump, ban.counts]
-  #ban.printban
-  #puts
+  nxbans = nxs.map{|nx|ban.reversi(nx)}
+  nxbans.each{|n|p [n.olddump, n.wait, n.place, n.dump, n.counts]}
+  nxban = nxbans.sample
+  nxban.printban
+  ban = nxban
 end
-p ban.counts

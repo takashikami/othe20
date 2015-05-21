@@ -6,7 +6,7 @@ end
 
 class Ban
   include Col
-  attr_accessor :m, :turn, :wait
+  attr_accessor :m, :turn, :wait, :olddump, :place
 
   def initialize
     @m = (0..63).to_a.map{|a|Mas.adr(a,self)}
@@ -73,6 +73,9 @@ class Ban
     nx.each do |m|
       nxban[*m]=@turn
     end
+    nxban.taketurn
+    nxban.olddump = self.dump
+    nxban.place = nx.first
     nxban
   end
 
