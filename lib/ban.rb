@@ -42,6 +42,14 @@ class Ban
     @turn = last
   end
 
+  def search(c)
+    @m.select{|m|m.c == c}
+  end
+
+  def counts
+    (0..3).map{|c|search(c).size}
+  end
+
   def [](x,y)
     @m[x+8*y] unless x<0 || y<0
   end
@@ -54,6 +62,7 @@ class Ban
     calc_placeables unless @placeables
     @placeables
   end
+
   def check(x,y)
     calc_placeables unless @placeables
     @placeables.select{|canx|canx.first==[x,y]}.first
@@ -66,8 +75,6 @@ class Ban
     end
     nxban
   end
-
-  private
 
   def calc_placeables
     @placeables = @m.select{|m|m.c == @wait}.map(&:around)
