@@ -15,16 +15,13 @@ ban.printban
 puts
 
 nx = ban.check(3,7)
-p ["="*10,nx]
-
-ban.reversi(nx)
+ban = ban.reversi(nx)
 ban.printban
 p [ban.turn, nx.first, ban.dump]
 puts
 
 p ban.taketurn
 nx = ban.placeables.first
-
-ban.reversi(nx)
+ban = ban.reversi(nx)
 ban.printban
 p [ban.turn, nx.first, ban.dump]

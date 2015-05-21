@@ -3,6 +3,7 @@ module Col
   SIRO=2
   KURO=3
 end
+
 class Ban
   include Col
   attr_accessor :m, :turn, :wait
@@ -15,6 +16,7 @@ class Ban
 
   def initialize_copy(obj)
     @m = obj.m.map{|a|Mas.pos(a.x,a.y,self,a.c)}
+    @placeables = nil
   end
 
   def dump
@@ -41,19 +43,20 @@ class Ban
   end
 
   def placeables
-    calc_placeables # unless defined? @placeables
+    calc_placeables unless @placeables
     @placeables
   end
   def check(x,y)
-    calc_placeables unless defined? @placeables
-    @placeables.select{|canx|
-      canx.first==[x,y]}.first
+    calc_placeables unless @placeables
+    @placeables.select{|canx|canx.first==[x,y]}.first
   end
 
   def reversi(nx)
+    nxban = self.clone
     nx.each do |m|
-      self[*m]=@turn
+      nxban[*m]=@turn
     end
+    nxban
   end
 
   private
