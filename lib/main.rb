@@ -3,49 +3,24 @@ require '../lib/ban'
 require '../lib/mas'
 include Col
 
-ban = Ban.new
-ban[0,0]=KURO
-ban[0,1]=KURO
-ban[1,0]=KURO
-ban[1,1]=KURO
-ban.turn = KURO
-p ban.turn
-ban.printban
+#
+require 'active_record'
 
-nxs = ban.calc_placeables
-if nxs.empty?
-  p ban.taketurn
-  nxs = ban.calc_placeables
+#create table bandb(id int auto_increment, dump char(34) unique not null, index(id));
+ActiveRecord::Base.establish_connection(
+    host:     'localhost',
+    database: 'othe20',
+    adapter: 'mysql2',
+    username: 'root',
+    password: '',
+)
+#ActiveRecord::Base.logger = Logger.new($stderr)
+#ActiveRecord::Base.logger.level = 0
+
+class BanDB < ActiveRecord::Base
+  self.table_name = 'bandb'
+  self.primary_key = 'id'
 end
-if nxs.empty?
-  p "game set"
-else
-  ban.reversi(nxs.first).printban
-end
-
-#exit
-
-
-ban = Ban.new
-ban[3,3]=KURO
-ban[4,4]=KURO
-ban[4,3]=SIRO
-ban[3,4]=SIRO
-ban[3,5]=SIRO
-ban[3,6]=SIRO
-ban[4,6]=KURO
-ban.printban
-puts
-
-nx = ban.check(3,7)
-oldban = ban
-ban = oldban.reversi(nx)
-ban.taketurn
-p [oldban.dump, ban.wait, nx.first, ban.dump]
-p '='*15
-Ban.load(ban.dump).printban
-p '='*15
-puts
 
 ban = Ban.new
 ban[3,3]=KURO
@@ -63,8 +38,14 @@ loop do
   break if nxs.empty?
 
   nxbans = nxs.map{|nx|ban.reversi(nx)}
-  nxbans.each{|n|p [n.olddump, n.wait, n.place, n.dump, n.counts]}
-  nxban = nxbans.sample
-  nxban.printban
-  ban = nxban
+  BanDB.transaction do
+    nxbans.each do |n|
+      next if BanDB.where(dump: n.dump).first
+      p [n.olddump, n.wait, n.place, n.dump, n.counts]
+      db = BanDB.new
+      db.dump = n.dump
+      db.save
+    end
+  end
+  ban = nxbans.sample
 end
