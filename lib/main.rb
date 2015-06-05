@@ -38,20 +38,52 @@ class BanDB < ActiveRecord::Base
   self.primary_key = 'id'
 end
 
-ban = Ban.new
-ban[3,3]=KURO
-ban[4,4]=KURO
-ban[4,3]=SIRO
-ban[3,4]=SIRO
+if BanDB.count == 0
+  ban = Ban.new
+  ban[3,3]=KURO
+  ban[4,4]=KURO
+  ban[4,3]=SIRO
+  ban[3,4]=SIRO
+
+  db = BanDB.new
+  db.dump = ban.dump
+  db.olddump = '00'*16+'00'
+  db.turn = KURO
+  db.count0 = ban.counts[0]
+  db.count2 = ban.counts[2]
+  db.count3 = ban.counts[3]
+  db.save!
+end
+
 loop do
-  break unless ban.counts[0] > 0
-  nxs = if ban.calc_placeables.empty?
-    ban.taketurn
-    ban.calc_placeables
-  else
-    ban.placeables
+  nxs = nil
+  old = nil
+  BanDB.transaction do
+    old = BanDB.where(stat: 0).lock(true).first
+    break if old.nil?
+    ban = Ban.load(old.dump)
+    ban.printban
+    unless ban.counts[0] > 0
+      ban.printban
+      old.stat = 3 #gameset
+      old.save!
+      next
+    end
+    nxs = if ban.calc_placeables.empty?
+      ban.taketurn
+      ban.calc_placeables
+    else
+      ban.placeables
+    end
+    if nxs.empty?
+      ban.printban
+      old.stat = 3 #gameset
+      old.save!
+      next
+    end
+    old.stat = 1
+    old.save!
   end
-  break if nxs.empty?
 
   nxbans = nxs.map{|nx|ban.reversi(nx)}
   BanDB.transaction do
@@ -68,6 +100,9 @@ loop do
       db.count2 = n.counts[2]
       db.count3 = n.counts[3]
       db.save
+      oldban = BanDB.find(old.id)
+      oldban.stat = 2
+      oldban.save
     end
   end
   ban = nxbans.sample

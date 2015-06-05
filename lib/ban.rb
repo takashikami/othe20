@@ -28,6 +28,7 @@ class Ban
     dump, turn = [data].pack('H*').unpack('B128'+'C')
     ban.m = [(0..63).to_a,dump.unpack('a2'*64).map{|a|a.to_i(2)}].transpose.map{|a|Mas.adr(a[0],ban,a[1])}
     ban.turn = turn
+    ban.wait = (turn == KURO ? SIRO : KURO)
     ban
   end
 
