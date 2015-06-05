@@ -10,7 +10,7 @@ require 'active_record'
 create table bandb(
   id bigint auto_increment primary key,
   olddump char(34) not null,
-  dump char(34) unique not null,
+  dump char(34) not null,
   stat smallint not null default 0,
   turn smallint,
   placex smallint,
@@ -20,6 +20,7 @@ create table bandb(
   count3 smallint,
   updated_on timestamp,
   created_on timestamp,
+  index(stat),
   index(olddump)
 );
 =end
@@ -56,13 +57,18 @@ if BanDB.count == 0
 end
 
 loop do
-  nxs = nil
+  nxs = []
   old = nil
   BanDB.transaction do
-    old = BanDB.where(stat: 0).lock(true).first
+    old = BanDB.where(stat:0).lock.first
     break if old.nil?
+    if BanDB.where(olddump:old.dump).count > 0
+      ban.printban
+      old.stat = 2
+      old.save!
+      next
+    end
     ban = Ban.load(old.dump)
-    ban.printban
     unless ban.counts[0] > 0
       ban.printban
       old.stat = 3 #gameset
