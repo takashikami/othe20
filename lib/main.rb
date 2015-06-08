@@ -63,14 +63,12 @@ loop do
     old = BanDB.where(stat:0).lock.first
     break if old.nil?
     if BanDB.where(olddump:old.dump).count > 0
-      ban.printban
       old.stat = 2
       old.save!
       next
     end
     ban = Ban.load(old.dump)
     unless ban.counts[0] > 0
-      ban.printban
       old.stat = 3 #gameset
       old.save!
       next
@@ -82,7 +80,6 @@ loop do
       ban.placeables
     end
     if nxs.empty?
-      ban.printban
       old.stat = 3 #gameset
       old.save!
       next
@@ -94,7 +91,6 @@ loop do
   nxbans = nxs.map{|nx|ban.reversi(nx)}
   BanDB.transaction do
     nxbans.each do |n|
-      next if BanDB.where(dump: n.dump).first
       p [n.olddump, n.wait, n.place, n.dump, n.counts]
       db = BanDB.new
       db.dump = n.dump
@@ -111,5 +107,4 @@ loop do
       oldban.save
     end
   end
-  ban = nxbans.sample
 end
